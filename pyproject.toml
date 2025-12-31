@@ -1,0 +1,18 @@
+[project]
+name = "user-representations"
+version = "0.1.0"
+description = "Analyzing convergence of user representations across multiple aggregation functions"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "numpy>=2.2.6",
+    "pandas>=2.3.3",
+    "scikit-learn>=1.7.2",
+    "scipy>=1.15.3",
+    "torch>=2.9.1",
+    "tqdm>=4.67.1",
+]
+
+[project.urls]
+Homepage = "https://github.com/samiadam7/user-representations"
+Repository = "https://github.com/samiadam7/user-representations"
