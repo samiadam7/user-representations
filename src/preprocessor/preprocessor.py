@@ -36,13 +36,11 @@ class TrackPreprocessor(TransformerMixin):
     
     
     def fit(self, df:pd.DataFrame):
-        X_clean = self.clean_data(df)
-        self.preprocessor.fit(X_clean)
+        self.preprocessor.fit(df)
     
         
     def transform(self, df:pd.DataFrame) -> pd.DataFrame:
-        X = self.clean_data(df)
-        X = self.preprocessor.transform(X)
+        X = self.preprocessor.transform(df)
     
         try:
             column_names = self.preprocessor.get_feature_names_out()
