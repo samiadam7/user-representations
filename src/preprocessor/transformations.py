@@ -11,7 +11,7 @@ def drop_na_and_duplicates(df:pd.DataFrame, subset:List[str]) -> pd.DataFrame:
     return df.dropna().drop_duplicates(subset=subset).copy()
     
     
-def column_list_transform(df:pd.DataFrame, columns:List[str]) -> pd.DataFrame:
+def column_list_transform(df:pd.DataFrame, columns:List[str] | str) -> pd.DataFrame:
     return df[columns].apply(lambda x: ast.literal_eval(x) if isinstance(x, str) else x)
 
 
