@@ -3,7 +3,7 @@ name = "user-representations"
 version = "0.1.0"
 description = "Analyzing convergence of user representations across multiple aggregation functions"
 readme = "README.md"
-requires-python = ">=3.10"
+requires-python = ">=3.12"
 dependencies = [
     "numpy>=2.2.6",
     "pandas>=2.3.3",
