@@ -9,7 +9,8 @@ import user_representations.preprocessor.transformations as transformations
 from user_representations.preprocessor.preprocessor import TrackPreprocessor, PreprocessorConfig, export_to_csv
 from user_representations.logging_config.logging_config import setup_logging
 
-setup_logging(experiment_name="preprocessor")
+config_file = Path(__file__).resolve().parents[2] / "logging_config" / "config.json"
+setup_logging(level="DEBUG", experiment_name="preprocessor", config_file=config_file)
 
 META_COLS = ["name", "album", "main_artist", "track_number", "disc_number", "release_date", "key"]
 FEATURE_COLS = ["explicit", "danceability", "energy", "loudness",
