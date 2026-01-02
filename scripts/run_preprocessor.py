@@ -1,6 +1,6 @@
 import pandas as pd
-from src.preprocessor.preprocessor import TrackPreprocessor, PreprocessorConfig, export_to_csv
-import src.preprocessor.transformations as transformations
+from user_representations.preprocessor.preprocessor import TrackPreprocessor, PreprocessorConfig, export_to_csv
+import user_representations.preprocessor.transformations as transformations
 from pathlib import Path
 from functools import partial
 from sklearn.preprocessing import StandardScaler, OneHotEncoder
