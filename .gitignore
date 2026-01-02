@@ -17,3 +17,4 @@ data/
 
 # Environment variables
 .env
+.vscode/
