@@ -13,6 +13,16 @@ type CleaningStep = Callable[[pd.DataFrame], pd.DataFrame]
 type Exporter = Callable[[pd.DataFrame, Path], None]
 
 
+def _get_step_name(step: CleaningStep) -> str:
+    """Return a readable name for a cleaning step (handles functions and partials)."""
+    if hasattr(step, "__name__"):
+        return step.__name__
+    func = getattr(step, "func", None)  # functools.partial and similar
+    if func is not None and hasattr(func, "__name__"):
+        return func.__name__
+    return repr(step)
+
+
 def export_to_csv(df:pd.DataFrame, path:Path) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     logger.debug(f"Exporting to CSV located at {path}")
@@ -40,7 +50,12 @@ class TrackPreprocessor(TransformerMixin):
     def clean_data(self, df:pd.DataFrame) -> pd.DataFrame:
         steps = len(self.cleaning_steps)
         for i, cleaning_step in enumerate(self.cleaning_steps, 1):
-            logger.debug("Cleaning step %d/%d: %s", i, steps, cleaning_step.__name__)
+            logger.debug(
+                "Cleaning step %d/%d: %s",
+                i,
+                steps,
+                _get_step_name(cleaning_step),
+            )
             df = cleaning_step(df)
         logger.info("Cleaning finished. DataFrame shape: %s", df.shape)
         return df
