@@ -1,7 +1,7 @@
 from sklearn.base import TransformerMixin
 from sklearn.pipeline import Pipeline
 import pandas as pd
-from typing import Callable, List
+from typing import Callable, List, Self
 from dataclasses import dataclass, field
 from pathlib import Path
 
@@ -19,7 +19,7 @@ def export_to_csv(df:pd.DataFrame, path:Path) -> None:
 class PreprocessorConfig:
     preprocessor:Pipeline
     cleaning_steps:List[CleaningStep] = field(default_factory=list)
-    exporter:Exporter = field(default_factory=export_to_csv)
+    exporter:Exporter = field(default=export_to_csv)
     
 
 class TrackPreprocessor(TransformerMixin):
@@ -35,8 +35,9 @@ class TrackPreprocessor(TransformerMixin):
         return df
     
     
-    def fit(self, df:pd.DataFrame):
+    def fit(self, df:pd.DataFrame) -> Self:
         self.preprocessor.fit(df)
+        return self
     
         
     def transform(self, df:pd.DataFrame) -> pd.DataFrame:
