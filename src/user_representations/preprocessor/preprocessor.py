@@ -1,10 +1,13 @@
-from sklearn.base import TransformerMixin
-from sklearn.pipeline import Pipeline
-import pandas as pd
+import logging
+from pathlib import Path
 from typing import Callable, List, Self
 from dataclasses import dataclass, field
-from pathlib import Path
 
+import pandas as pd
+from sklearn.base import TransformerMixin
+from sklearn.pipeline import Pipeline
+
+logger = logging.getLogger(__name__)
 
 type CleaningStep = Callable[[pd.DataFrame], pd.DataFrame]
 type Exporter = Callable[[pd.DataFrame, Path], None]
@@ -12,6 +15,7 @@ type Exporter = Callable[[pd.DataFrame, Path], None]
 
 def export_to_csv(df:pd.DataFrame, path:Path) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
+    logger.debug(f"Exporting to CSV located at {path}")
     df.to_csv(path, index=False)
 
 
@@ -27,20 +31,30 @@ class TrackPreprocessor(TransformerMixin):
         self.preprocessor = config.preprocessor
         self.cleaning_steps = config.cleaning_steps
         self.exporter = config.exporter
+        logger.debug(
+            "Initialized TrackPreprocessor with %d cleaning steps",
+            len(self.cleaning_steps),
+        )
         
         
     def clean_data(self, df:pd.DataFrame) -> pd.DataFrame:
-        for cleaning_step in self.cleaning_steps:
+        steps = len(self.cleaning_steps)
+        for i, cleaning_step in enumerate(self.cleaning_steps, 1):
+            logger.debug("Cleaning step %d/%d: %s", i, steps, cleaning_step.__name__)
             df = cleaning_step(df)
+        logger.info("Cleaning finished. DataFrame shape: %s", df.shape)
         return df
     
     
     def fit(self, df:pd.DataFrame) -> Self:
+        logger.info("Fitting preprocessor on data with shape: %s", df.shape)
         self.preprocessor.fit(df)
+        logger.info("Finished fitting preprocessor.")
         return self
     
         
     def transform(self, df:pd.DataFrame) -> pd.DataFrame:
+        logger.debug("Transforming data with shape: %s", df.shape)
         X = self.preprocessor.transform(df)
     
         try:
@@ -48,10 +62,11 @@ class TrackPreprocessor(TransformerMixin):
             X = pd.DataFrame(X, columns=column_names)
         except:
             X = pd.DataFrame(X)
-        
+        logger.debug("Transformed data to shape: %s", X.shape)
         return X
     
     
     def export(self, X:pd.DataFrame, path:Path) -> None:
+        logger.info("Exporting transformed data with shape %s to %s", X.shape, path)
         self.exporter(X, path)
         

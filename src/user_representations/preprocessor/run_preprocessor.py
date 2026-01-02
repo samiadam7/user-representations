@@ -1,11 +1,15 @@
-import pandas as pd
-from user_representations.preprocessor.preprocessor import TrackPreprocessor, PreprocessorConfig, export_to_csv
-import user_representations.preprocessor.transformations as transformations
 from pathlib import Path
 from functools import partial
-from sklearn.preprocessing import StandardScaler, OneHotEncoder
-from sklearn.compose import make_column_selector
+
 import numpy as np
+import pandas as pd
+from sklearn.compose import make_column_selector
+from sklearn.preprocessing import StandardScaler, OneHotEncoder
+import user_representations.preprocessor.transformations as transformations
+from user_representations.preprocessor.preprocessor import TrackPreprocessor, PreprocessorConfig, export_to_csv
+from user_representations.logging_config.logging_config import setup_logging
+
+setup_logging(experiment_name="preprocessor")
 
 META_COLS = ["name", "album", "main_artist", "track_number", "disc_number", "release_date", "key"]
 FEATURE_COLS = ["explicit", "danceability", "energy", "loudness",
