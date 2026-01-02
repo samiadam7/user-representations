@@ -14,6 +14,9 @@ dependencies = [
     "tqdm>=4.67.1",
 ]
 
+[project.scripts]
+run-preprocessor = "user_representations.preprocessor.run_preprocessor:main"
+
 [project.urls]
 Homepage = "https://github.com/samiadam7/user-representations"
 Repository = "https://github.com/samiadam7/user-representations"
