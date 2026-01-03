@@ -23,7 +23,7 @@ def _get_step_name(step: CleaningStep) -> str:
     return repr(step)
 
 
-def export_to_csv(df:pd.DataFrame, path:Path) -> None:
+def export_to_csv(df: pd.DataFrame, path: Path) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     logger.debug(f"Exporting to CSV located at {path}")
     df.to_csv(path, index=False)
@@ -31,13 +31,13 @@ def export_to_csv(df:pd.DataFrame, path:Path) -> None:
 
 @dataclass
 class PreprocessorConfig:
-    preprocessor:Pipeline
-    cleaning_steps:List[CleaningStep] = field(default_factory=list)
-    exporter:Exporter = field(default=export_to_csv)
-    
+    preprocessor: Pipeline
+    cleaning_steps: List[CleaningStep] = field(default_factory=list)
+    exporter: Exporter = field(default=export_to_csv)
+
 
 class TrackPreprocessor(TransformerMixin):
-    def __init__(self, config:PreprocessorConfig):
+    def __init__(self, config: PreprocessorConfig):
         self.preprocessor = config.preprocessor
         self.cleaning_steps = config.cleaning_steps
         self.exporter = config.exporter
@@ -45,9 +45,8 @@ class TrackPreprocessor(TransformerMixin):
             "Initialized TrackPreprocessor with %d cleaning steps",
             len(self.cleaning_steps),
         )
-        
-        
-    def clean_data(self, df:pd.DataFrame) -> pd.DataFrame:
+
+    def clean_data(self, df: pd.DataFrame) -> pd.DataFrame:
         steps = len(self.cleaning_steps)
         for i, cleaning_step in enumerate(self.cleaning_steps, 1):
             logger.debug(
@@ -59,29 +58,29 @@ class TrackPreprocessor(TransformerMixin):
             df = cleaning_step(df)
         logger.info("Cleaning finished. DataFrame shape: %s", df.shape)
         return df
-    
-    
-    def fit(self, df:pd.DataFrame) -> Self:
+
+    def fit(self, df: pd.DataFrame) -> Self:
         logger.info("Fitting preprocessor on data with shape: %s", df.shape)
         self.preprocessor.fit(df)
         logger.info("Finished fitting preprocessor.")
         return self
-    
-        
-    def transform(self, df:pd.DataFrame) -> pd.DataFrame:
+
+    def transform(self, df: pd.DataFrame) -> pd.DataFrame:
         logger.debug("Transforming data with shape: %s", df.shape)
         X = self.preprocessor.transform(df)
-    
+
         try:
             column_names = self.preprocessor.get_feature_names_out()
             X = pd.DataFrame(X, columns=column_names)
-        except:
+        except ValueError:
+            logger.warning(
+                "Could not get feature names from preprocessor. Using default column names."
+            )
             X = pd.DataFrame(X)
+
         logger.debug("Transformed data to shape: %s", X.shape)
         return X
-    
-    
-    def export(self, X:pd.DataFrame, path:Path) -> None:
+
+    def export(self, X: pd.DataFrame, path: Path) -> None:
         logger.info("Exporting transformed data with shape %s to %s", X.shape, path)
         self.exporter(X, path)
-        
