@@ -5,6 +5,7 @@ description = "Analyzing convergence of user representations across multiple agg
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
+    "matplotlib>=3.10.8",
     "numpy>=2.2.6",
     "pandas>=2.3.3",
     "pytest>=9.0.2",
